@@ -1,23 +1,46 @@
+let started = false;
+
 function setup() {
 	createCanvas(windowWidth * 0.7, windowHeight * 0.7, WEBGL);
 	strokeWeight(.5);
 	background(255);
 	colorMode(HSB)
 
-	// Getting microphone input
-	mic = new p5.AudioIn();
-	mic.start();
-
-	// This allows us to generate a spectrum, and use the microphone as input
-	fft = new p5.FFT();
-	mic.connect(fft);
-
 	number = 150;
 	array = [];
 }
 
+function mousePressed() {
+	if (!started) {
+		userStartAudio().then(() => {
+			// Getting microphone input
+			mic = new p5.AudioIn();
+			mic.start();
+
+			// This allows us to generate a spectrum, and use the microphone as input
+			fft = new p5.FFT();
+			mic.connect(fft);
+
+			started = true;
+		});
+	}
+}
+
 function draw() {
 	background(255);
+
+	if (!started) {
+		push();
+		resetMatrix();
+		fill(0);
+		noStroke();
+		textAlign(CENTER, CENTER);
+		textSize(18);
+		text('Click to start', 0, 0);
+		pop();
+		return;
+	}
+
 	noFill()
 	orbitControl();
 	spectrum = fft.analyze()
