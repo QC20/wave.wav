@@ -1,70 +1,66 @@
 let started = false;
+let mic, fft;
+let number = 150;
+let array = [];
 
 function setup() {
-	createCanvas(windowWidth * 0.7, windowHeight * 0.7, WEBGL);
-	strokeWeight(.5);
-	background(255);
-	colorMode(HSB)
+	let canvas = createCanvas(windowWidth, windowHeight, WEBGL);
+	canvas.parent('canvas-container');
+	strokeWeight(0.5);
+	colorMode(HSB);
 
-	number = 150;
-	array = [];
+	document.getElementById('start-btn').addEventListener('click', startAudio);
 }
 
-function mousePressed() {
-	if (!started) {
-		userStartAudio().then(() => {
-			// Getting microphone input
-			mic = new p5.AudioIn();
-			mic.start();
-
-			// This allows us to generate a spectrum, and use the microphone as input
+function startAudio() {
+	userStartAudio().then(() => {
+		mic = new p5.AudioIn();
+		mic.start(() => {
 			fft = new p5.FFT();
 			mic.connect(fft);
-
 			started = true;
+
+			let overlay = document.getElementById('overlay');
+			overlay.classList.add('hidden');
 		});
-	}
+	}).catch((err) => {
+		console.warn('Audio start failed:', err);
+	});
+}
+
+function windowResized() {
+	resizeCanvas(windowWidth, windowHeight);
 }
 
 function draw() {
-	background(255);
+	background(10);
 
-	if (!started) {
-		push();
-		resetMatrix();
-		fill(0);
-		noStroke();
-		textAlign(CENTER, CENTER);
-		textSize(18);
-		text('Click to start', 0, 0);
-		pop();
-		return;
-	}
+	if (!started) return;
 
-	noFill()
+	noFill();
 	orbitControl();
-	spectrum = fft.analyze()
-	if(frameCount % 1 == 0){array.push(spectrum)}
-	translate(0, 100)
-	rotateX(-0.4)
-	//noStroke()
+
+	let spectrum = fft.analyze();
+	array.push(spectrum);
 	if (array.length > 60) {
-		array = array.splice(1)
+		array.splice(0, 1);
 	}
-	for (let j = array.length-1; j >= 0; j-=3) {
-		item = array[j]
-		for (let i = 0; i < number; i+=2) {
-			// option = random([0, 1]) ? stroke(0) : noStroke()
-			x = map(i, 0, number, -0.15, 0.15) * width
-			y = 0
-			w = (width * 0.5) / number
-			h = item[i]
-			col = map(h, 0, 255, 0, 360)
-			fill(col, 360, 360)
-			push()
-			translate(x, y - h / 2, 200+(w-30)*((array.length-j)/3))
-			box(w, h, w)
-			pop()
+
+	translate(0, 100);
+	rotateX(-0.4);
+
+	for (let j = array.length - 1; j >= 0; j -= 3) {
+		let item = array[j];
+		for (let i = 0; i < number; i += 2) {
+			let x = map(i, 0, number, -0.15, 0.15) * width;
+			let w = (width * 0.5) / number;
+			let h = item[i];
+			let col = map(h, 0, 255, 0, 360);
+			fill(col, 360, 360);
+			push();
+			translate(x, -h / 2, 200 + (w - 30) * ((array.length - j) / 3));
+			box(w, h, w);
+			pop();
 		}
 	}
 }
