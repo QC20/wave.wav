@@ -3,23 +3,29 @@
 <head>
 	<meta charset="utf-8" />
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<title>wave.wav — 3D Audio Visualizer</title>
+	<title>wave.wav</title>
+	<link rel="preconnect" href="https://fonts.googleapis.com">
+	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+	<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500&display=swap" rel="stylesheet">
 	<script src="https://cdn.jsdelivr.net/npm/p5@1.11.7/lib/p5.js"></script>
 	<script src="https://cdn.jsdelivr.net/npm/p5@1.11.7/lib/addons/p5.sound.min.js"></script>
 	<link rel="stylesheet" type="text/css" href="src/styles/style.css">
 </head>
-
 <body>
 	<div id="overlay">
 		<div id="overlay-content">
-			<h1>wave.wav</h1>
-			<p>A real-time 3D audio visualizer using your microphone</p>
-			<button id="start-btn">Click to start</button>
-			<span class="hint">Drag to rotate &nbsp;·&nbsp; Scroll to zoom</span>
+			<p class="eyebrow">audio visualization</p>
+			<h1>wave<span class="wav">.wav</span></h1>
+			<p class="description">real&#8209;time 3D spectroscopy of sound</p>
+			<button id="start-btn">
+				<span class="pulse-dot"></span>
+				enable microphone
+			</button>
+			<p class="hint">drag to orbit &nbsp;&middot;&nbsp; scroll to zoom</p>
 		</div>
 	</div>
+	<div id="hud"><span>wave.wav</span></div>
 	<div id="canvas-container"></div>
 	<script src="src/javascript/sketch.js"></script>
 </body>
-
 </html>
